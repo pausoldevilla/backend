@@ -1,6 +1,6 @@
 # backend - Vintage Market
 
-Aquest és el backend de **Vintage Market**, una plataforma centrada en la compra i venda d’articles vintage, històrics de segona mà.
+Aquest és el backend de "soldevilla", una plataforma centrada en la compra i venda d’articles de segina ma històrics com mobles, joies i pintures, vestimenta.
 
 ## Tecnologies previstes
 - Node.js
