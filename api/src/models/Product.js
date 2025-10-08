@@ -1,35 +1,20 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
-  nom: {
+  name: {
     type: String,
     required: true,
-    trim: true,
     minlength: 2
   },
-  descripcio: {
-    type: String,
-    maxlength: 500
-  },
-  preu: {
+  price: {
     type: Number,
     required: true,
     min: 0
   },
-  categoria: {
+  description: {
     type: String,
-    enum: ['mobles', 'joies', 'art', 'roba'],
-    required: true
-  },
-  enEstoc: {
-    type: Boolean,
-    default: true
+    maxlength: 500
   }
-}, {
-  timestamps: true
 });
-
-// Índex per categoria per optimitzar cerques
-productSchema.index({ categoria: 1 });
 
 module.exports = mongoose.model('Product', productSchema);
