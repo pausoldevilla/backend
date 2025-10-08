@@ -1,20 +1,22 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
-  name: {
+  nom: {
     type: String,
-    required: true,
+    required: [true, 'El nom és obligatori'],
     minlength: 2
   },
-  price: {
+  preu: {
     type: Number,
-    required: true,
+    required: [true, 'El preu és obligatori'],
     min: 0
   },
-  description: {
+  categoria: {
     type: String,
-    maxlength: 500
-  }
+    required: [true, 'La categoria és obligatòria'],
+    enum: ['mobles', 'joies', 'art', 'roba']
+  },
+
 });
 
 module.exports = mongoose.model('Product', productSchema);
