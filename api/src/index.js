@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const connectDB = require('./config/db');
-const productRoutes = require('./routes/productRoutes'); // 👈 Importem les rutes
+const productRoutes = require('./routes/productRoutes'); 
 
 const app = express();
 
