@@ -9,7 +9,7 @@ const createProduct = async (req, res) => {
   }
 };
 
-const getAllProducts = async (req, res) => {  // ✅ nombre cambiado
+const getAllProducts = async (req, res) => {
   try {
     const products = await productService.getProducts();
     res.json({ status: 'success', data: products });
@@ -50,7 +50,7 @@ const deleteProduct = async (req, res) => {
 
 module.exports = {
   createProduct,
-  getAllProducts,  // ✅ exportado con el nuevo nombre
+  getAllProducts,
   getProductById,
   updateProduct,
   deleteProduct

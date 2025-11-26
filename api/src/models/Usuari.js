@@ -18,7 +18,6 @@ const usuariSchema = new mongoose.Schema({
     lowercase: true,
     match: [/.+\@.+\..+/, 'Format d’email invàlid']
   },
-
   contrasenya: { 
     type: String,
     required: true,
@@ -28,14 +27,18 @@ const usuariSchema = new mongoose.Schema({
     type: String,
     enum: ['client', 'admin'],
     default: 'client'
-  }
+  },
+  refreshTokens: [
+    {
+      token: { type: String },
+      createdAt: { type: Date, default: Date.now }
+    }
+  ]
 }, {
   timestamps: true
 });
 
-
 usuariSchema.index({ email: 1 }, { unique: true });
-
 
 usuariSchema.pre('save', async function (next) {
   if (!this.isModified('contrasenya')) return next();
@@ -49,7 +52,7 @@ usuariSchema.pre('save', async function (next) {
   }
 });
 
-usuariSchema.methods.compararPassword = function (passwordPlana) {
+usuariSchema.methods.matchPassword = function(passwordPlana) {
   return bcrypt.compare(passwordPlana, this.contrasenya);
 };
 
