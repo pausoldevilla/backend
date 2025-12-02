@@ -14,18 +14,19 @@ const productSchema = new mongoose.Schema({
   categoria: {
     type: String,
     required: [true, 'La categoria és obligatòria'],
-    enum: ['plantas', 'macetas', 'herramientas', 'decoracion', 'semillas']
+    enum: ['interior', 'exterior', 'suculentes', 'florals']
   },
-  imatge: {
-    type: String, // URL o ruta de la imagen
-    required: false, // opcional
-    validate: {
-      validator: function(v) {
-        return /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(v);
-      },
-      message: props => `${props.value} no és una URL d'imatge vàlida`
-    }
-  },
+imatge: {
+  type: String,
+  required: false,
+  validate: {
+    validator: function(v) {
+      return /^((https?:\/\/.+)|\/img\/.+\.(jpg|jpeg|png|gif|webp))$/i.test(v);
+    },
+    message: props => `${props.value} no és una URL o ruta d'imatge vàlida`
+  }
+}
+,
   descripcio: {
     type: String,
     required: false,
