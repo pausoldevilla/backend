@@ -38,8 +38,6 @@ const usuariSchema = new mongoose.Schema({
   timestamps: true
 });
 
-usuariSchema.index({ email: 1 }, { unique: true });
-
 usuariSchema.pre('save', async function (next) {
   if (!this.isModified('contrasenya')) return next();
 
