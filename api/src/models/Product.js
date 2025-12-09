@@ -30,7 +30,7 @@ imatge: {
   descripcio: {
     type: String,
     required: false,
-    maxlength: 500 // límite para evitar textos demasiado largos
+    maxlength: 500
   }
 });
 
