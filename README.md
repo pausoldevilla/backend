@@ -1,6 +1,6 @@
 # Backend – Soldevilla  
 
-Aquest és el backend de **Soldevilla**, una plataforma centrada en la compra i venda d’articles de segona mà històrics (mobles, joies, pintures, vestimenta, etc.).  
+Aquest és el backend de **Soldevilla**, una plataforma centrada en la compra de plantes.  
 
 ---
 
@@ -14,7 +14,7 @@ Aquest és el backend de **Soldevilla**, una plataforma centrada en la compra i 
 ## Funcionalitats principals  
 - **Gestió d’usuaris:** registre, login, rols (usuari i administrador)  
 - **CRUD d’articles:** crear, llegir, actualitzar i eliminar anuncis  
-- **Missatgeria interna:** contacte entre compradors i venedors  
+- **Missatgeria interna:** contacte amb el venedor  
 - **Favorits:** guardar i consultar articles marcats  
 - **Gestió de categories i filtres:** per organitzar i facilitar la cerca  
 - **Administració (opcional):** control d’anuncis fraudulents i gestió de contingut  
