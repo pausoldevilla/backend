@@ -14,19 +14,18 @@ const productSchema = new mongoose.Schema({
   categoria: {
     type: String,
     required: [true, 'La categoria és obligatòria'],
-    enum: ['interior', 'exterior', 'suculentes', 'florals']
+    enum: ['interior', 'exterior', 'suculentas', 'florales']
   },
-imatge: {
-  type: String,
-  required: false,
-  validate: {
-    validator: function(v) {
-      return /^((https?:\/\/.+)|\/img\/.+\.(jpg|jpeg|png|gif|webp))$/i.test(v);
-    },
-    message: props => `${props.value} no és una URL o ruta d'imatge vàlida`
-  }
-}
-,
+  imatge: {
+    type: String,
+    required: false,
+    validate: {
+      validator: function (v) {
+        return /^((https?:\/\/.+)|\/img\/.+\.(jpg|jpeg|png|gif|webp))$/i.test(v);
+      },
+      message: props => `${props.value} no és una URL o ruta d'imatge vàlida`
+    }
+  },
   descripcio: {
     type: String,
     required: false,
