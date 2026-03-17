@@ -31,6 +31,7 @@ const generarRefreshToken = async (usuari) => {
 };
 
 
+// Ejercicio 4.2 Registre d'usuaris
 const registroUsuari = async (data) => {
     const existe = await Usuari.findOne({ email: data.email });
     if (existe) {
@@ -62,6 +63,7 @@ const registroUsuari = async (data) => {
 };
 
 
+// Ejercicio 4.3 Login amb JWT
 const loginUsuari = async ({ email, contrasenya }) => {
     const usuari = await Usuari.findOne({ email }).select('+contrasenya');
 
@@ -95,12 +97,19 @@ const loginUsuari = async ({ email, contrasenya }) => {
     return { usuari: usuariSenseContrasenya, accessToken, refreshToken: refreshTokenString };
 };
 
+// Ejercicio 4.4 Refresh token (part de la lògica)
 const rotarRefreshToken = async (usuari, oldToken) => {
     usuari.refreshTokens = usuari.refreshTokens.filter(t => t.token !== oldToken);
 
     const newToken = await generarRefreshToken(usuari);
 
     return newToken;
+};
+
+// Ejercicio 4.5 Logout
+const logoutUsuari = async (usuari, token) => {
+    usuari.refreshTokens = usuari.refreshTokens.filter(t => t.token !== token);
+    await usuari.save();
 };
 
 const findUsuariByRefreshToken = async (token) => {
@@ -115,5 +124,6 @@ module.exports = {
     generarAccessToken,
     generarRefreshToken,
     rotarRefreshToken,
+    logoutUsuari,
     findUsuariByRefreshToken
 };

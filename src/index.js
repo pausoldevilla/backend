@@ -7,6 +7,7 @@ const productRoutes = require('./routes/productRoutes');
 const usuariRoutes = require('./routes/usuariRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const comandaRoutes = require('./routes/comandaRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +29,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/usuari', usuariRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/comandes', comandaRoutes);
+app.use('/api/auth', authRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {

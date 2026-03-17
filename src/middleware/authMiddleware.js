@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Usuari = require('../models/Usuari');
 
+// Ejercicio 4.6 Middleware d’autenticació
 const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;

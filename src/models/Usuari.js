@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+// Ejercicio 4.1 Instal·lació de dependències
+const bcrypt = require('bcryptjs');
 
 const SALT_ROUNDS = 10;
 
