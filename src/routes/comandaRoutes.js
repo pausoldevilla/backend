@@ -38,4 +38,15 @@ router.get('/:id', authMiddleware, async (req, res) => {
     }
 });
 
+// PUT /api/comandes/:id — Actualizar pedido (para completar pago)
+router.put('/:id', authMiddleware, async (req, res) => {
+    try {
+        const comanda = await comandaService.updateComanda(req.params.id, req.body);
+        if (!comanda) return res.status(404).json({ status: 'error', message: 'Comanda no trobada' });
+        res.json({ status: 'success', data: comanda });
+    } catch (error) {
+        res.status(400).json({ status: 'error', message: error.message });
+    }
+});
+
 module.exports = router;

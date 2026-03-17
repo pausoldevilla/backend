@@ -29,7 +29,7 @@ const comandaSchema = new mongoose.Schema({
     metodePagament: {
         type: String,
         enum: ['targeta', 'transferencia'],
-        required: true
+        required: false
     },
     total: {
         type: Number,
@@ -38,8 +38,8 @@ const comandaSchema = new mongoose.Schema({
     },
     estat: {
         type: String,
-        enum: ['pendent', 'procesant', 'enviat', 'completat', 'cancelat'],
-        default: 'pendent'
+        enum: ['pendent_pagament', 'pendent', 'procesant', 'enviat', 'completat', 'cancelat'],
+        default: 'pendent_pagament'
     }
 }, {
     timestamps: true
