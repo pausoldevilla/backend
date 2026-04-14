@@ -1,4 +1,3 @@
-// Ejercicio 4.7 RBAC (Role Based Access Control)
 module.exports = (...roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.usuari.rol)) {

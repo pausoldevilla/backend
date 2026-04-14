@@ -8,7 +8,6 @@ const usuariRoutes = require('./routes/usuariRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const comandaRoutes = require('./routes/comandaRoutes');
 const authRoutes = require('./routes/authRoutes');
-// 4.3 Integració amb Express: Importacions per la documentació Swagger
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
 
@@ -28,7 +27,6 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
-// 4.3 Integració amb Express: Ruta /api-docs on servim la interfície web de Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/products', productRoutes);

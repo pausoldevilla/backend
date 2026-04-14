@@ -16,7 +16,6 @@ const options = {
       },
     ],
     components: {
-      // 4.6 Autenticació amb Swagger: Configuració JWT per provar endpoints protegits
       securitySchemes: {
         bearerAuth: {
           type: 'http',
@@ -24,7 +23,6 @@ const options = {
           bearerFormat: 'JWT',
         },
       },
-      // 4.5 Definició de models (schemas): Esquemes reutilitzables per a l'API
       schemas: {
         User: {
 

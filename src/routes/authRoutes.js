@@ -33,7 +33,6 @@ authRoutes.post('/logout', authController.logout);
  *         description: Error en el registre
  */
 
-// 4.4 Documentar endpoints: Exemple de ruta documentada (login)
 /**
  * @swagger
  * /api/auth/login:

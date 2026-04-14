@@ -12,7 +12,6 @@ usuariRoutes.get('/perfil', authMiddleware, usuariController.perfil);
  *   description: Rutes d'usuari
  */
 
-// 4.4 Documentar endpoints: Exemple de ruta documentada (perfil d'usuari)
 /**
  * @swagger
  * /api/usuari/perfil:

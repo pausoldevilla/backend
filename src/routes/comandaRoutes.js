@@ -3,7 +3,7 @@ const router = express.Router();
 const comandaService = require('../services/comandaService');
 const authMiddleware = require('../middleware/authMiddleware');
 
-// POST /api/comandes — Crear pedido (requiere auth)
+// POST /api/comandes
 router.post('/', authMiddleware, async (req, res) => {
     try {
         const data = {
@@ -17,7 +17,7 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
-// GET /api/comandes/user — Pedidos del usuario autenticado
+// GET /api/comandes/user
 router.get('/user', authMiddleware, async (req, res) => {
     try {
         const comandes = await comandaService.getComandesUsuari(req.usuari._id);
@@ -27,7 +27,7 @@ router.get('/user', authMiddleware, async (req, res) => {
     }
 });
 
-// GET /api/comandes/:id — Pedido por ID
+// GET /api/comandes/:id
 router.get('/:id', authMiddleware, async (req, res) => {
     try {
         const comanda = await comandaService.getComandaById(req.params.id);
@@ -38,7 +38,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// PUT /api/comandes/:id — Actualizar pedido (para completar pago)
+// PUT /api/comandes/:id
 router.put('/:id', authMiddleware, async (req, res) => {
     try {
         const comanda = await comandaService.updateComanda(req.params.id, req.body);
@@ -56,7 +56,6 @@ router.put('/:id', authMiddleware, async (req, res) => {
  *   description: Rutes de comandes (pedidos)
  */
 
-// 4.4 Documentar endpoints: Exemple de ruta documentada (crear comanda)
 /**
  * @swagger
  * /api/comandes:

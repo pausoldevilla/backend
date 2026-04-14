@@ -11,7 +11,6 @@ router.post('/', contactController.sendEmail);
  *   description: Rutes de contacte
  */
 
-// 4.4 Documentar endpoints: Exemple de ruta documentada (enviar email)
 /**
  * @swagger
  * /api/contact:
