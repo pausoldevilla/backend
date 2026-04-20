@@ -7,9 +7,11 @@ const createCheckoutSession = async (req, res) => {
         const { productes, adreca } = req.body;
 
         if (!productes || productes.length === 0) {
+            // Sessió 17 - Exercici 4.6: Validacions i gestió d’errors (Carret buit)
             return res.status(400).json({ status: 'error', message: 'El carret està buit' });
         }
 
+        // Sessió 17 - Exercici 4.6: Validacions i gestió d’errors (Validar productes, preus i stock)
         // 1. Validar productes, preus i stock
         const line_items = [];
         let totalCalculat = 0;
@@ -24,13 +26,19 @@ const createCheckoutSession = async (req, res) => {
                 return res.status(400).json({ status: 'error', message: `No hi ha prou stock per ${dbProduct.nom}` });
             }
 
+            // Stripe només accepta imatges amb URLs absolutes i públiques
+            const images = [];
+            if (dbProduct.imatge && dbProduct.imatge.startsWith('http')) {
+                images.push(dbProduct.imatge);
+            }
+
             // No confiem en el preu del frontend
             line_items.push({
                 price_data: {
                     currency: 'eur',
                     product_data: {
                         name: dbProduct.nom,
-                        images: dbProduct.imatge ? [dbProduct.imatge] : [],
+                        images: images,
                     },
                     unit_amount: Math.round(dbProduct.preu * 100), // Stripe usa cèntims
                 },
@@ -40,6 +48,7 @@ const createCheckoutSession = async (req, res) => {
             totalCalculat += dbProduct.preu * item.quantitat;
         }
 
+        // Sessió 17 - Exercici 4.2: Creació de comanda al backend
         // 2. Crear la comanda en estat pendent_pagament
         const novaComanda = new Comanda({
             usuari: req.usuari._id,
@@ -57,19 +66,24 @@ const createCheckoutSession = async (req, res) => {
 
         await novaComanda.save();
 
+        // Sessió 17 - Exercici 4.3: Integració amb Stripe (backend)
         // 3. Crear sessió de Stripe
+        const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').trim();
+        console.log('DEBUG: Usant CLIENT_URL:', clientUrl);
+        
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items,
             mode: 'payment',
-            success_url: `${process.env.CLIENT_URL || 'http://localhost:5173'}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.CLIENT_URL || 'http://localhost:5173'}/checkout/cancel`,
+            success_url: `${clientUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${clientUrl}/checkout/cancel`,
             metadata: {
                 comandaId: novaComanda._id.toString()
             }
         });
+        console.log('DEBUG: Sessió de Stripe creada:', session.id);
 
-        res.json({ id: session.id });
+        res.json({ id: session.id, url: session.url });
 
     } catch (error) {
         console.error('Error createCheckoutSession:', error);
@@ -77,13 +91,14 @@ const createCheckoutSession = async (req, res) => {
     }
 };
 
+// Sessió 17 - Exercici 4.5: Confirmació de pagament (Webhook)
 const handleWebhook = async (req, res) => {
     const sig = req.headers['stripe-signature'];
     let event;
 
     try {
         event = stripe.webhooks.constructEvent(
-            req.body, // Necessita el raw body
+            req.body,
             sig,
             process.env.STRIPE_WEBHOOK_SECRET
         );
@@ -100,7 +115,7 @@ const handleWebhook = async (req, res) => {
             // Actualitzar comanda
             const comanda = await Comanda.findById(comandaId);
             if (comanda) {
-                comanda.estat = 'pendent'; // O 'pagat' si prefereixes
+                comanda.estat = 'pendent';
                 await comanda.save();
 
                 // Reduir stock
