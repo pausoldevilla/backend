@@ -30,7 +30,14 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: false,
     maxlength: 500
+  },
+  stock: {
+    type: Number,
+    required: true,
+    default: 10,
+    min: 0
   }
 });
+
 
 module.exports = mongoose.model('Product', productSchema);

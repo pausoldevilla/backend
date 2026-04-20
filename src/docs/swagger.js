@@ -1,5 +1,3 @@
-// 4.1 Instal·lació de dependències: (Veure package.json) Instal·lades swagger-ui-express i swagger-jsdoc
-// 4.2 Configuració inicial de Swagger: Arxiu base de configuració per la documentació
 const swaggerJSDoc = require('swagger-jsdoc');
 
 const options = {
