@@ -20,6 +20,38 @@ const perfil = (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const usuaris = await usuariService.getAllUsers();
+    res.status(200).json({ ok: true, data: usuaris });
+  } catch (error) {
+    res.status(500).json({ ok: false, message: error.message });
+  }
+};
+
+const updateUser = async (req, res) => {
+  try {
+    const usuari = await usuariService.updateUser(req.params.id, req.body);
+    if (!usuari) return res.status(404).json({ ok: false, message: 'Usuari no trobat' });
+    res.status(200).json({ ok: true, data: usuari });
+  } catch (error) {
+    res.status(400).json({ ok: false, message: error.message });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const usuari = await usuariService.deleteUser(req.params.id);
+    if (!usuari) return res.status(404).json({ ok: false, message: 'Usuari no trobat' });
+    res.status(200).json({ ok: true, message: 'Usuari eliminat correctament' });
+  } catch (error) {
+    res.status(500).json({ ok: false, message: error.message });
+  }
+};
+
 module.exports = {
-  perfil
+  perfil,
+  getAllUsers,
+  updateUser,
+  deleteUser
 };

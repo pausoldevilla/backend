@@ -2,6 +2,27 @@ const express = require('express');
 const router = express.Router();
 const comandaService = require('../services/comandaService');
 const authMiddleware = require('../middleware/authMiddleware');
+const roleMiddleware = require('../middleware/roleMiddleware');
+
+// GET /api/comandes/all (Admin)
+router.get('/all', authMiddleware, roleMiddleware('admin'), async (req, res) => {
+    try {
+        const comandes = await comandaService.getComandes();
+        res.json({ status: 'success', data: comandes });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+});
+
+// GET /api/comandes/stats (Admin)
+router.get('/stats', authMiddleware, roleMiddleware('admin'), async (req, res) => {
+    try {
+        const stats = await comandaService.getStats();
+        res.json({ status: 'success', data: stats });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+});
 
 // POST /api/comandes
 router.post('/', authMiddleware, async (req, res) => {

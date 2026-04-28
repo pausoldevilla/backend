@@ -25,11 +25,25 @@ const deleteComanda = async (id) => {
     return await Comanda.findByIdAndDelete(id);
 };
 
+const getStats = async () => {
+    return await Comanda.aggregate([
+        {
+            $group: {
+                _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+                totalVendes: { $sum: "$total" },
+                comptador: { $sum: 1 }
+            }
+        },
+        { $sort: { "_id": 1 } }
+    ]);
+};
+
 module.exports = {
     createComanda,
     getComandes,
     getComandaById,
     getComandesUsuari,
     updateComanda,
-    deleteComanda
+    deleteComanda,
+    getStats
 };

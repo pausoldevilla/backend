@@ -118,6 +118,18 @@ const findUsuariByRefreshToken = async (token) => {
     });
 };
 
+const getAllUsers = async () => {
+    return await Usuari.find().select('-contrasenya -refreshTokens');
+};
+
+const updateUser = async (id, data) => {
+    return await Usuari.findByIdAndUpdate(id, data, { new: true }).select('-contrasenya');
+};
+
+const deleteUser = async (id) => {
+    return await Usuari.findByIdAndDelete(id);
+};
+
 module.exports = {
     registroUsuari,
     loginUsuari,
@@ -125,5 +137,8 @@ module.exports = {
     generarRefreshToken,
     rotarRefreshToken,
     logoutUsuari,
-    findUsuariByRefreshToken
+    findUsuariByRefreshToken,
+    getAllUsers,
+    updateUser,
+    deleteUser
 };
