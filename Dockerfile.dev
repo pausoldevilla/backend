@@ -1,0 +1,19 @@
+# ─── Dockerfile de desenvolupament ─────────────────────────────────────────
+# Usa nodemon per hot-reload automàtic en canviar fitxers
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+ENV NODE_ENV=development
+
+COPY package*.json ./
+RUN npm ci
+
+# El codi font es munta com a volum (no es copia aquí)
+# Això permet veure els canvis en temps real sense reconstruir la imatge
+
+EXPOSE 3000
+
+# Nodemon vigilarà els canvis i reiniciarà el servidor automàticament
+CMD ["npx", "nodemon", "src/index.js"]
