@@ -2,6 +2,17 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Comanda = require('../models/Comanda');
 const Product = require('../models/Product');
 
+// Funció auxiliar per marcar la comanda com a pagada i reduir l'stock
+async function marcarComandaComAPagada(comanda) {
+    comanda.estat = 'pagat';
+    await comanda.save();
+    for (const item of comanda.productes) {
+        await Product.findByIdAndUpdate(item.producte, {
+            $inc: { stock: -item.quantitat }
+        });
+    }
+}
+
 const createCheckoutSession = async (req, res) => {
     try {
         const { productes, adreca } = req.body;
@@ -112,18 +123,10 @@ const handleWebhook = async (req, res) => {
         const comandaId = session.metadata.comandaId;
 
         try {
-            // Actualitzar comanda
             const comanda = await Comanda.findById(comandaId);
-            if (comanda) {
-                comanda.estat = 'pendent';
-                await comanda.save();
-
-                // Reduir stock
-                for (const item of comanda.productes) {
-                    await Product.findByIdAndUpdate(item.producte, {
-                        $inc: { stock: -item.quantitat }
-                    });
-                }
+            if (comanda && comanda.estat !== 'pagat') {
+                await marcarComandaComAPagada(comanda);
+                console.log(`Comanda ${comandaId} marcada com a pagada via webhook.`);
             }
         } catch (error) {
             console.error('Error actualitzant comanda post-webhook:', error);
@@ -133,7 +136,43 @@ const handleWebhook = async (req, res) => {
     res.json({ received: true });
 };
 
+// Sessió 17 - Exercici 4.5: Confirmació de pagament via session_id (fallback per a dev local)
+// Stripe redirigeix a /checkout/success?session_id=xxx, i el frontend crida aquest endpoint
+// per confirmar el pagament quan el webhook no pot arribar (entorn local).
+const confirmPaymentBySession = async (req, res) => {
+    const { session_id } = req.query;
+    if (!session_id) {
+        return res.status(400).json({ status: 'error', message: 'Falta session_id' });
+    }
+
+    try {
+        const session = await stripe.checkout.sessions.retrieve(session_id);
+
+        if (session.payment_status !== 'paid') {
+            return res.status(400).json({ status: 'error', message: 'El pagament no s\'ha completat' });
+        }
+
+        const comandaId = session.metadata.comandaId;
+        const comanda = await Comanda.findById(comandaId);
+
+        if (!comanda) {
+            return res.status(404).json({ status: 'error', message: 'Comanda no trobada' });
+        }
+
+        if (comanda.estat !== 'pagat') {
+            await marcarComandaComAPagada(comanda);
+            console.log(`Comanda ${comandaId} marcada com a pagada via confirm-payment.`);
+        }
+
+        res.json({ status: 'ok', message: 'Pagament confirmat', comandaId });
+    } catch (error) {
+        console.error('Error confirmant pagament:', error);
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+};
+
 module.exports = {
     createCheckoutSession,
-    handleWebhook
+    handleWebhook,
+    confirmPaymentBySession
 };

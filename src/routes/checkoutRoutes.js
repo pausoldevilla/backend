@@ -10,4 +10,7 @@ router.post('/create-session', authMiddleware, checkoutController.createCheckout
 // Aquesta ruta es registrarà a index.js amb un tractament especial per al raw body.
 router.post('/webhook', checkoutController.handleWebhook);
 
+// Ruta de confirmació per session_id (fallback per a dev local on el webhook no arriba)
+router.get('/confirm-payment', authMiddleware, checkoutController.confirmPaymentBySession);
+
 module.exports = router;

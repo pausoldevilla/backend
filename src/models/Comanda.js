@@ -38,7 +38,7 @@ const comandaSchema = new mongoose.Schema({
     },
     estat: {
         type: String,
-        enum: ['pendent_pagament', 'pendent', 'procesant', 'enviat', 'completat', 'cancelat'],
+        enum: ['pendent_pagament', 'pendent', 'pagat', 'procesant', 'enviat', 'completat', 'cancelat'],
         default: 'pendent_pagament'
     }
 }, {
