@@ -1,0 +1,69 @@
+# ─── Entorn de PRODUCCIÓ ─────────────────────────────────────────────────────
+# Característiques:
+#   - Imatges multi-stage optimitzades (mides mínimes)
+#   - Backend sense devDependencies (nodemon, etc.)
+#   - Frontend servit per Nginx (sense Node.js a la imatge final)
+#   - Sense volums de codi font (tot dins de la imatge)
+#   - restart: always per alta disponibilitat
+
+services:
+
+  # ── MongoDB ────────────────────────────────────────────────────────────────
+  mongodb:
+    image: mongo:7
+    container_name: ecommerce-mongodb-prod
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo_data_prod:/data/db
+    # En producció NO exposem el port de Mongo a l'exterior (només intern)
+    networks:
+      - ecommerce_net_prod
+
+  # ── Backend (Node/Express - imatge multi-stage) ────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile        # Dockerfile de producció (multi-stage)
+    container_name: ecommerce-backend-prod
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      MONGO_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongodb:27017/ecommerce?authSource=admin
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      CLIENT_URL: ${CLIENT_URL}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    networks:
+      - ecommerce_net_prod
+
+  # ── Frontend (Nginx + build estàtic - imatge multi-stage) ─────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile        # Dockerfile de producció (multi-stage)
+    container_name: ecommerce-frontend-prod
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - ecommerce_net_prod
+
+volumes:
+  mongo_data_prod:
+
+networks:
+  ecommerce_net_prod:
+    driver: bridge
