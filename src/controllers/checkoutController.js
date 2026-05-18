@@ -77,6 +77,15 @@ const createCheckoutSession = async (req, res) => {
 
         await novaComanda.save();
 
+        // 📸 SCREENSHOT: Logging de checkout i pagaments (Order created)
+        if (req.log) {
+            req.log.info({
+                orderId: novaComanda._id,
+                userId: req.usuari._id,
+                total: novaComanda.total
+            }, 'Order created');
+        }
+
         // Sessió 17 - Exercici 4.3: Integració amb Stripe (backend)
         // 3. Crear sessió de Stripe
         const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').trim();
@@ -98,6 +107,14 @@ const createCheckoutSession = async (req, res) => {
 
     } catch (error) {
         console.error('Error createCheckoutSession:', error);
+        
+        // 📸 SCREENSHOT: Logging de checkout i pagaments (Payment failed)
+        if (req.log) {
+            req.log.error({
+                userId: req.usuari?._id,
+                error: error.message
+            }, 'Payment failed');
+        }
         res.status(500).json({ status: 'error', message: error.message });
     }
 };

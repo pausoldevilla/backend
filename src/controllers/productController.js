@@ -9,12 +9,25 @@ const createProduct = async (req, res) => {
   }
 };
 
-const getAllProducts = async (req, res) => {
+const getAllProducts = async (req, res, next) => {
   try {
+    // 📸 SCREENSHOT: Logs manuals en controladors (Getting product list)
+    if (req.log) {
+      req.log.info({
+        requestId: req.requestId
+      }, 'Getting product list');
+    }
     const products = await productService.getProducts();
     res.json({ status: 'success', data: products });
   } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message });
+    // 📸 SCREENSHOT: Logs manuals en errors (productController)
+    if (req.log) {
+      req.log.error({
+        requestId: req.requestId,
+        error: error.message
+      }, 'Error getting products');
+    }
+    next(error); // Passem l'error al errorHandler global
   }
 };
 

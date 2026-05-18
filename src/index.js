@@ -9,8 +9,12 @@ const contactRoutes = require('./routes/contactRoutes');
 const comandaRoutes = require('./routes/comandaRoutes');
 const authRoutes = require('./routes/authRoutes');
 const checkoutRoutes = require('./routes/checkoutRoutes');
+const healthRoutes = require('./routes/healthRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
+const requestId = require('./middleware/requestId');
+const httpLogger = require('./middleware/httpLogger');
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +30,11 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// 📸 SCREENSHOT: Afegir requestId i httpLogger. Important l'ordre.
+app.use(requestId);
+app.use(httpLogger);
+
+
 // El webhook de Stripe necessita el "raw body" per verificar la signatura
 app.use('/api/checkout/webhook', express.raw({ type: 'application/json' }));
 
@@ -39,6 +48,15 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/comandes', comandaRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/checkout', checkoutRoutes);
+app.use('/api', healthRoutes);
+
+// 📸 SCREENSHOT: Endpoint temporal d'error
+app.get('/api/debug/error', (req, res, next) => {
+  next(new Error('Error de prova per observabilitat'));
+});
+
+// 📸 SCREENSHOT: Middleware global d'errors afegit al final
+app.use(errorHandler);
 
 
 mongoose.connect(process.env.MONGO_URI)
