@@ -30,12 +30,10 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// 📸 SCREENSHOT: Afegir requestId i httpLogger. Important l'ordre.
 app.use(requestId);
 app.use(httpLogger);
 
 
-// El webhook de Stripe necessita el "raw body" per verificar la signatura
 app.use('/api/checkout/webhook', express.raw({ type: 'application/json' }));
 
 app.use(express.json());
@@ -50,12 +48,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/checkout', checkoutRoutes);
 app.use('/api', healthRoutes);
 
-// 📸 SCREENSHOT: Endpoint temporal d'error
+
 app.get('/api/debug/error', (req, res, next) => {
   next(new Error('Error de prova per observabilitat'));
 });
-
-// 📸 SCREENSHOT: Middleware global d'errors afegit al final
 app.use(errorHandler);
 
 

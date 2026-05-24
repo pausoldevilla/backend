@@ -2,7 +2,6 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Comanda = require('../models/Comanda');
 const Product = require('../models/Product');
 
-// Funció auxiliar per marcar la comanda com a pagada i reduir l'stock
 async function marcarComandaComAPagada(comanda) {
     comanda.estat = 'pagat';
     await comanda.save();
@@ -18,12 +17,9 @@ const createCheckoutSession = async (req, res) => {
         const { productes, adreca } = req.body;
 
         if (!productes || productes.length === 0) {
-            // Sessió 17 - Exercici 4.6: Validacions i gestió d’errors (Carret buit)
             return res.status(400).json({ status: 'error', message: 'El carret està buit' });
         }
 
-        // Sessió 17 - Exercici 4.6: Validacions i gestió d’errors (Validar productes, preus i stock)
-        // 1. Validar productes, preus i stock
         const line_items = [];
         let totalCalculat = 0;
 
@@ -37,13 +33,11 @@ const createCheckoutSession = async (req, res) => {
                 return res.status(400).json({ status: 'error', message: `No hi ha prou stock per ${dbProduct.nom}` });
             }
 
-            // Stripe només accepta imatges amb URLs absolutes i públiques
             const images = [];
             if (dbProduct.imatge && dbProduct.imatge.startsWith('http')) {
                 images.push(dbProduct.imatge);
             }
 
-            // No confiem en el preu del frontend
             line_items.push({
                 price_data: {
                     currency: 'eur',
@@ -51,7 +45,7 @@ const createCheckoutSession = async (req, res) => {
                         name: dbProduct.nom,
                         images: images,
                     },
-                    unit_amount: Math.round(dbProduct.preu * 100), // Stripe usa cèntims
+                    unit_amount: Math.round(dbProduct.preu * 100),
                 },
                 quantity: item.quantitat,
             });
@@ -59,8 +53,6 @@ const createCheckoutSession = async (req, res) => {
             totalCalculat += dbProduct.preu * item.quantitat;
         }
 
-        // Sessió 17 - Exercici 4.2: Creació de comanda al backend
-        // 2. Crear la comanda en estat pendent_pagament
         const novaComanda = new Comanda({
             usuari: req.usuari._id,
             productes: productes.map(p => ({
@@ -77,7 +69,6 @@ const createCheckoutSession = async (req, res) => {
 
         await novaComanda.save();
 
-        // 📸 SCREENSHOT: Logging de checkout i pagaments (Order created)
         if (req.log) {
             req.log.info({
                 orderId: novaComanda._id,
@@ -86,11 +77,9 @@ const createCheckoutSession = async (req, res) => {
             }, 'Order created');
         }
 
-        // Sessió 17 - Exercici 4.3: Integració amb Stripe (backend)
-        // 3. Crear sessió de Stripe
         const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').trim();
         console.log('DEBUG: Usant CLIENT_URL:', clientUrl);
-        
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items,
@@ -107,8 +96,7 @@ const createCheckoutSession = async (req, res) => {
 
     } catch (error) {
         console.error('Error createCheckoutSession:', error);
-        
-        // 📸 SCREENSHOT: Logging de checkout i pagaments (Payment failed)
+
         if (req.log) {
             req.log.error({
                 userId: req.usuari?._id,
@@ -119,7 +107,6 @@ const createCheckoutSession = async (req, res) => {
     }
 };
 
-// Sessió 17 - Exercici 4.5: Confirmació de pagament (Webhook)
 const handleWebhook = async (req, res) => {
     const sig = req.headers['stripe-signature'];
     let event;
@@ -153,9 +140,6 @@ const handleWebhook = async (req, res) => {
     res.json({ received: true });
 };
 
-// Sessió 17 - Exercici 4.5: Confirmació de pagament via session_id (fallback per a dev local)
-// Stripe redirigeix a /checkout/success?session_id=xxx, i el frontend crida aquest endpoint
-// per confirmar el pagament quan el webhook no pot arribar (entorn local).
 const confirmPaymentBySession = async (req, res) => {
     const { session_id } = req.query;
     if (!session_id) {

@@ -1,4 +1,3 @@
-// 📸 SCREENSHOT: Middleware global d'errors observable
 const errorHandler = (err, req, res, next) => {
   req.log.error({
     requestId: req.requestId,

@@ -1,6 +1,5 @@
 const usuariService = require('../services/usuariServices');
 
-// Ejercicio 4.2 Registre d’usuaris
 const register = async (req, res) => {
   try {
     const usuariCreat = await usuariService.registroUsuari(req.body);
@@ -10,12 +9,10 @@ const register = async (req, res) => {
   }
 };
 
-// Ejercicio 4.3 Login amb JWT
 const login = async (req, res) => {
   try {
     const usuariAutenticat = await usuariService.loginUsuari(req.body);
     
-    // 📸 SCREENSHOT: Logging d'autenticació (Login correcte)
     if (req.log) {
       req.log.info({
         userId: usuariAutenticat.usuari._id,
@@ -25,7 +22,6 @@ const login = async (req, res) => {
     
     res.status(200).json({ ok: true, data: usuariAutenticat });
   } catch (error) {
-    // 📸 SCREENSHOT: Logging d'autenticació (Login incorrecte)
     if (req.log) {
       req.log.warn({
         email: req.body.email

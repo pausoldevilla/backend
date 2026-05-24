@@ -1,7 +1,6 @@
 const pinoHttp = require('pino-http');
 const logger = require('../config/logger');
 
-// 📸 SCREENSHOT: Middleware httpLogger amb configuració del requestId i logs automàtics
 const httpLogger = pinoHttp({
   logger,
   genReqId: function (req) {
@@ -10,7 +9,7 @@ const httpLogger = pinoHttp({
   customProps: function (req, res) {
     return {
       requestId: req.requestId,
-      userId: req.user?.userId || null
+      userId: req.usuari?._id || req.user?.userId || null
     };
   },
   customLogLevel: function (req, res, err) {
